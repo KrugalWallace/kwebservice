@@ -1,0 +1,70 @@
+private static string Decrypt(string toDecrypt)
+{
+    byte[] keyArray = get_key(); 
+    byte[] toEncryptArray = HexToByte(toDecrypt); 
+    RijndaelManaged rDel = new RijndaelManaged();
+    rDel.Key = keyArray;
+    //rDel.KeySize = 128;  
+    //rDel.BlockSize = 128;
+    rDel.Mode = CipherMode.ECB;
+    rDel.Padding = PaddingMode.PKCS7;
+
+    ICryptoTransform cTransform = rDel.CreateDecryptor();
+    byte[] resultArray = cTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
+    return UTF8Encoding.UTF8.GetString(resultArray);
+}
+
+private static byte[] get_key()
+{
+    string key = "password";
+    byte[] result = Encoding.UTF8.GetBytes(key);
+    MD5 md5 = new MD5CryptoServiceProvider(); 
+    return md5.ComputeHash(result);
+}
+
+private static byte[] HexToByte(string msg)
+{
+    //msg = msg.Replace(" ", "");
+    byte[] comBuffer = new byte[msg.Length / 2];
+    for (int i = 0; i < msg.Length; i += 2)
+    {
+        comBuffer[i / 2] = (byte)Convert.ToByte(msg.Substring(i, 2), 16);
+    }
+    return comBuffer;
+}
+
+
+static void Main(string[] args)
+{
+    Console.WriteLine(Encrypt("c552d8545e864fd8f8b73e442cca9276"));
+
+}
+
+private static string Encrypt(string toEncrypt)
+{
+    byte[] keyArray = get_key(); 
+    byte[] toEncryptArray = StringToByte(toEncrypt); 
+    RijndaelManaged rDel = new RijndaelManaged();
+    rDel.Key = keyArray;
+    //rDel.KeySize = 128;  
+    //rDel.BlockSize = 128;
+    rDel.Mode = CipherMode.ECB;
+    rDel.Padding = PaddingMode.PKCS7;
+
+    ICryptoTransform cTransform = rDel.CreateEncryptor();
+    byte[] resultArray = cTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
+    return UTF8Encoding.UTF8.GetString(resultArray);
+}
+
+private static byte[] get_key()
+{
+    string key = "password";
+    byte[] result = Encoding.UTF8.GetBytes(key);
+    MD5 md5 = new MD5CryptoServiceProvider(); 
+    return md5.ComputeHash(result);
+}
+
+private static byte[] StringToByte(string msg)
+{
+   //implement the function from string to byte
+}
